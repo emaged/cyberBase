@@ -1,0 +1,8 @@
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path('', views.homePageView, name='home'),
+    path('transfer/', views.transferView, name='transfer'),
+]

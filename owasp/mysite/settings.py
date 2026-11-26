@@ -71,7 +71,8 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
-SESSION_COOKIE_SAMESITE = None
+
+SESSION_COOKIE_SAMESITE = None  # FIX: this weakens csrf, allows cross site cookies
 
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
@@ -129,3 +130,9 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# FLAW 2: A02:2021 - Cryptographic Failures
+# Fix: Remove this PASSWORD_HASHERS section
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+]

@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 
+from django.db import connection
+
 from .models import Account
 
 # for Fix 1, dont forget to import this function
@@ -54,7 +56,12 @@ def transferView(request):
 
 @login_required
 def homePageView(request):
-    accounts = Account.objects.exclude(user_id=request.user.id)
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+                       SELECT username FROM users WHERE username !=
+                       """)
+    # accounts = Account.objects.exclude(user_id=request.user.id)
     return render(request, 'flaws/index.html', {'accounts': accounts})
 
 

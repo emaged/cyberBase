@@ -4,6 +4,24 @@ from django.shortcuts import redirect, render
 
 from .models import Account
 
+# for Fix 1, dont forget to import this function
+# from django.shortcuts import get_object_or_404
+
+
+@login_required
+def balanceView(request):
+    account_id = request.GET.get('id')
+
+    # FLAW 1: A01:2021 - Broken Access Control (IDOR)
+    account = Account.objects.get(id=account_id)
+
+    # FLAW 1 FIX
+    # account = get_object_or_404(
+    #     Account, id=account_id, user=request.user
+    # )
+
+    return render(request, 'flaws/balance.html', {'account': account})
+
 
 @login_required
 def transferView(request):
@@ -15,11 +33,14 @@ def transferView(request):
         toAccount = Account.objects.get(user_id=to.id)
         fromAccount = Account.objects.get(user_id=request.user.id)
 
+        if amount < 0:
+            return redirect('/')
+
         if not toAccount or not fromAccount:
-            redirect('/')
+            return redirect('/')
 
         if fromAccount.balance < amount:
-            redirect('/')
+            return redirect('/')
 
         # should be transaction
         fromAccount.balance -= amount

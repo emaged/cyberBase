@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db import connection
 
 from flaws.models import Account
 
@@ -6,9 +7,17 @@ from flaws.models import Account
 User.objects.filter(is_superuser=False).delete()
 
 
-alice = User.objects.create_user(username='alice', password='1245')
+# Reset ID counters
+with connection.cursor() as cursor:
+    cursor.execute("""
+        DELETE FROM sqlite_sequence
+        WHERE name IN ('auth_user', 'flaws_account')
+    """)
 
-bob = User.objects.create_user(username='bob', password='1245')
+
+alice = User.objects.create_user(username='alice', password='12345')
+
+bob = User.objects.create_user(username='bob', password='12345')
 
 charlie = User.objects.create_user(username='charlie', password='12345')
 

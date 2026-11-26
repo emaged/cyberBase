@@ -1,0 +1,14 @@
+<h2>Address Book</h2>
+<table>
+    <thead>
+        <th>user</th>
+    </thead>
+    <tbody>
+        {% for account in address_book %}
+            <tr>
+                <td>{{ account }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="/">home</a>

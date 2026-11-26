@@ -1,8 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import redirect, render
-
 from django.db import connection
+from django.shortcuts import redirect, render
 
 from .models import Account
 
@@ -22,7 +21,34 @@ def balanceView(request):
     #     Account, id=account_id, user=request.user
     # )
 
-    return render(request, 'flaws/balance.html', {'account': account})
+    return render(
+        request,
+        'flaws/balance.html',
+        {'account': account},
+    )
+
+
+@login_required
+def addressBookView(request):
+    # simplified implementation uses Accounts class
+
+    account_id = request.GET.get('id')
+    address_book = []
+
+    # FLAW 3
+    with connection.cursor() as cursor:
+        cursor.execute(f'SELECT username FROM auth_user WHERE id != "{account_id}"')
+        address_book = cursor.fetchall()
+
+    # FLAW 3 FIX
+    # slight differences with Account vs sql query, left as improvement
+    # address_book = Account.objects.exclude(user_id=request.user.id)
+
+    return render(
+        request,
+        'flaws/address_book.html',
+        {'address_book': address_book},
+    )
 
 
 @login_required
@@ -57,11 +83,7 @@ def transferView(request):
 @login_required
 def homePageView(request):
 
-    with connection.cursor() as cursor:
-        cursor.execute("""
-                       SELECT username FROM users WHERE username !=
-                       """)
-    # accounts = Account.objects.exclude(user_id=request.user.id)
+    accounts = Account.objects.exclude(user_id=request.user.id)
     return render(request, 'flaws/index.html', {'accounts': accounts})
 
 

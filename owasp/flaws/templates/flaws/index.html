@@ -6,12 +6,10 @@
     <body>
         <h1>Your account</h1>
         <form action="/balance/" method="get">
-            {% csrf_token %}
-            <input type="hidden" name="id" value="{{ user.id }}">
+            <input type="hidden" name="id" value="{{ user.account.id }}">
             <button type="submit">Account Info</button>
         </form>
         <form action="/book/" method="get">
-            {% csrf_token %}
             <input type="hidden" name="id" value="{{ user.id }}">
             <button type="submit">address book</button>
         </form>

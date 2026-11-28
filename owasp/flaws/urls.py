@@ -7,4 +7,5 @@ urlpatterns = [
     path('transfer/', views.transferView, name='transfer'),
     path('balance/', views.balanceView, name='balance'),
     path('book/', views.addressBookView, name='book'),
+    path('register/', views.registerView, name='register'),
 ]
